@@ -5,9 +5,10 @@ require 'ferrum'
 require 'chunky_png'
 
 BRAILLE = false
+PAGE_URL = ARGV.last || 'https://i.giphy.com/media/QMHoU66sBXqqLqYvGO/giphy.webp'
 
-def display(win, browser, top, left)
-  browser.mouse.scroll_to(top, left)
+def display(win, browser, offset)
+  browser.mouse.scroll_to(*offset)
   browser.screenshot(path: 'tmp.png')
   image = ChunkyPNG::Image.from_file('tmp.png')
 
@@ -44,26 +45,22 @@ begin
 
   win = Curses::Window.new(0, 0, 0, 0)
   win.keypad(true)
-  width = win.maxx
-  height = win.maxy
-  if BRAILLE
-    width *= 2
-    height *= 4
-  end
-  top = 0
-  left = 0
-  browser = Ferrum::Browser.new(window_size: [width, height])
-  browser.go_to(ARGV.last || 'https://i.giphy.com/media/QMHoU66sBXqqLqYvGO/giphy.webp')
+  offset = [0, 0]
+  dimensions = [win.maxx, win.maxy]
+  dimensions = [win.maxx * 2, win.maxy * 4] if BRAILLE
+  browser = Ferrum::Browser.new(window_size: dimensions)
+  browser.go_to(PAGE_URL)
 
   loop do
     win.clear
-    display(win, browser, left, top)
+    display(win, browser, offset)
     win.refresh
+    
     case win.getch
-    when Curses::KEY_UP then top -= height / 8
-    when Curses::KEY_DOWN then top += height / 8
-    when Curses::KEY_LEFT then left -= width / 8
-    when Curses::KEY_RIGHT then left += width / 8
+      when Curses::KEY_UP then offset[0] -= dimensions[1] / 8
+      when Curses::KEY_DOWN then offset[0] += dimensions[1] / 8
+      when Curses::KEY_LEFT then offset[1] -= dimensions[0] / 8
+      when Curses::KEY_RIGHT then offset[1] += dimensions[0] / 8
     end
   end
 ensure
