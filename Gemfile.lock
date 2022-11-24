@@ -21,6 +21,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   curses
@@ -28,4 +29,4 @@ DEPENDENCIES
   oily_png
 
 BUNDLED WITH
-   2.2.15
+   2.2.25

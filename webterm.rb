@@ -7,6 +7,8 @@ require 'oily_png'
 BRAILLE = true
 PAGE_URL = ARGV.last || 'https://i.giphy.com/media/QMHoU66sBXqqLqYvGO/giphy.webp'
 
+puts "Hello World!"
+
 def quantize_pixel(pixel)
   matching_color_index, matching_distance = 0, Float::MAX
   Curses::COLOR_TABLE.each_with_index do |color, index|
